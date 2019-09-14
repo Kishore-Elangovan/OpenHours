@@ -1,0 +1,14 @@
+{
+  "name": "openhours",
+  "version": "1.0.0",
+  "description": "Gives information about all the restaurants open at the time of request.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kishore Elangovan",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
