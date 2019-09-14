@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Abel&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <title>OpenHours</title>
+</head>
+
+<body id>  
+    <div class = "searchBar">
+        <h1 id = "nameHeader"><span id="food">Open</span>Hours</h1>
+
+        <form id="locForm">
+            <input type="text" name="location" id="location-input" placeholder="Enter your location"/>
+        </form>
+        <button id="location-button">Use My Location</button>
+    </div>
+
+    <div id = 'map'></div>
+    <div id = "restaurant-list">
+        <div id = "resName"></div>
+            <div id="ratings"></div>
+        <div id="resAddress"></div>
+    </div>
+
+
+
+
+<script>
+    var currentLoc = document.getElementById('location-button');
+    var latDetails = 0;
+    var longDetails = 0;
+
+    function activatePlaceSearch()
+    {
+        var restaurantAdd = document.getElementById("resName");
+        var restaurantAddress = document.getElementById("resAddress");
+        var input = document.getElementById('location-input');
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        var locationOf = "";
+
+        input.addEventListener("keypress", function(e)
+        {
+            if(e.keyCode === 13)
+            {
+                event.preventDefault();
+                locationOf = input.value;
+                
+                restaurantAdd.innerHTML = "";
+
+                if(locationOf != null)
+                {
+                    initialize(locationOf);
+                }
+            }
+
+        });
+
+        currentLoc.addEventListener("click", function()
+        {
+            if('geolocation' in navigator)
+            {
+                navigator.geolocation.getCurrentPosition(function(position) 
+                {
+                    latDetails = position.coords.latitude; 
+                    longDetails = position.coords.longitude;
+                    restaurantAdd.innerHTML = "";
+                    initialize("");
+                });
+            }
+            else
+            {
+                console.log("geoloc not available");
+            }
+        });
+        
+        //google maps
+
+        var map;
+        var service;
+        var infowindow;
+        var geocoder;
+            
+        function initialize(data) 
+        {
+            var heading = document.createElement("h2");
+            heading.innerHTML = "Restaurant List";
+            heading.style.marginLeft = "20px";
+            heading.style.marginTop = "5px";
+            restaurantAdd.appendChild(heading);
+            
+            
+            if(data == "")
+            {
+                proceedFurther();  
+            }
+            else
+            {
+                var geocoder = new google.maps.Geocoder();
+
+                geocoder.geocode({'address': data}, function(results, status)
+                {
+                    if (status === 'OK') 
+                    {
+                        latDetails = results["0"].geometry.viewport.na.h;
+                        longDetails = results["0"].geometry.viewport.ja.h;
+                    }
+
+                    proceedFurther();
+                });  
+            }    
+        }
+
+        function proceedFurther()
+        {
+            var locationGiven = new google.maps.LatLng(latDetails,longDetails);
+
+            map = new google.maps.Map(document.getElementById('map'), 
+            {
+                center: locationGiven,
+                zoom: 50
+            });
+
+            var request = 
+            {
+                location: locationGiven,
+                radius: 9000,
+                type: ['restaurant']
+            };
+
+            service = new google.maps.places.PlacesService(map);
+            service.nearbySearch(request, callback); 
+        }
+
+        function callback(results, status) 
+        {
+            if (status == google.maps.places.PlacesServiceStatus.OK) 
+            {
+                for (var i = 0; i < results.length; i++) 
+                {
+                    console.log(results[i]);
+                    if(results[i].opening_hours != undefined && results[i].opening_hours.open_now == true)
+                    {
+                        var horLine = document.createElement("hr");
+                        var starsCheck;
+                        var restaurantInfor = document.createElement("p");
+                        restaurantInfor.innerHTML += results[i].name + " ";
+
+                        var resAddress = document.createElement("p");
+                        resAddress.innerHTML += results[i].vicinity + ' ';
+                        resAddress.style.fontSize = "100%";
+
+                        var ratings = Math.round(results[i].rating);
+
+                        var curr = 0;
+                        while(curr < ratings)
+                        {
+                            starsCheck = document.createElement("span");
+                            starsCheck.className = "fa fa-star checked";
+
+                            restaurantInfor.appendChild(starsCheck);
+                            curr++;
+                        }
+
+
+                        restaurantAdd.appendChild(horLine);
+                        restaurantAdd.appendChild(restaurantInfor);
+                        restaurantAdd.appendChild(resAddress);
+                        restaurantAdd.appendChild(horLine);
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=[YOUR-API-KEY]&libraries=places&callback=activatePlaceSearch"></script>
+
+</body>
+
+</html>
