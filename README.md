@@ -9,7 +9,7 @@
 Built with:
 
 - [Google API](https://developers.google.com/apis-explorer/)
-- [Node.js] (https://nodejs.org/en/)
+- [Node.js](https://nodejs.org/en/)
 - [Express](https://expressjs.com/)
-- [Love for fooood]
+- Love for fooood
 
