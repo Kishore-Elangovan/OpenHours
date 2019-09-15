@@ -2,6 +2,10 @@
 
 > Hungry? Find the open restaurants closest to your location through OpenHours!
 
+
+![demo](public/OpenHoursPage.png)
+
+
 Built with:
 
 - [Google API](https://developers.google.com/apis-explorer/)
