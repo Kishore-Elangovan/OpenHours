@@ -13,3 +13,6 @@ Built with:
 - [Express](https://expressjs.com/)
 - Love for fooood
 
+
+An example search...
+![demo](public/MyLocationSearch.png)
